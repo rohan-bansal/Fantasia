@@ -12,8 +12,9 @@ _20% complete_
 
 ### In the Future
 
-- Different Classes (Rogue, Mage, Bard, etc.)
+- Different Classes (Rogue Thief, Bard, Treasure Hunter, etc.)
 - Graphics :D
+- Support for File Saving
 
 ### _Changes made regularly to the .java file, finished program will be a .jar_
 
