@@ -15,4 +15,11 @@ _20% complete_
 - Different Classes (Rogue, Mage, Bard, etc.)
 - Graphics :D
 
-### Changes made regularly to the .java file, finished program will be a .jar
+### _Changes made regularly to the .java file, finished program will be a .jar_
+
+**How to run the file (for now)**
+
+1. Clone repository
+2. Open a terminal, navigate into the directory
+3. type `javac ConsoleGame.java`
+4. type `java ConsoleGame`
