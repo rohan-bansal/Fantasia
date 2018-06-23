@@ -14,3 +14,5 @@ _20% complete_
 
 - Different Classes (Rogue, Mage, Bard, etc.)
 - Graphics :D
+
+### Changes made regularly to the .java file, finished program will be a .jar
