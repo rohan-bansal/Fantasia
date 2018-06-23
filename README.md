@@ -27,7 +27,8 @@ _20% complete_
 
 **How to run the file (.jar)**
 
-1. Install java (if you do not already have it)
-2. Double click the file OR open a terminal and do the following:
-3. navigate into the directory
-4. type `java -jar ConsoleGame.jar`
+1. Clone repository
+2. Install java (if you do not already have it)
+3. Double click the file OR open a terminal and do the following:
+4. navigate into the directory
+5. type `java -jar ConsoleGame.jar`
