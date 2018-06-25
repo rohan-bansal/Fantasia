@@ -15,7 +15,7 @@ _20% complete_
 - Different Classes (Rogue Thief, Bard, Treasure Hunter, etc.)
 - Graphics :D
 - Support for File Saving
-- Support for Windows terminal colors (`JNI`)
+- Support for Windows terminal colors (`JNI`) for operating systems lower than Windows 10
 
 ### _Changes made regularly to the .java file, finished program will be a .jar_
 
