@@ -102,7 +102,7 @@ class Player {
                 use.TypeLine("\u001B[34m" + "\nBought item. You have $" + money + " left. Current inventory consists of: \n\n" + "\u001B[0m");
                 for(String part : inventory) {
                     if(part == null) {
-                        use.TypeLine("\u001B[34m" + "\tEmpty Slot" + "\u001B[0m");
+                        use.TypeLine(" ");
                     } else {
                         use.TypeLine("\u001B[34m" + "\t" + part + "\n" + "\u001B[0m");
                     }
@@ -223,7 +223,7 @@ public class ConsoleGame {
         TypeLine(ANSI_BLUE + "Confirm Purchase by typing the amount of money for the item (10).\n>> " + ANSI_RESET);
         placeholder2 = input.nextLine();
         user.buy(Shop("blacksmith"), Shop("blacksmith")[Integer.parseInt(placeholder) - 1], Integer.parseInt(placeholder2));
-        TypeLine(ANSI_RED + "\nTo travel and interact, use the following keywords, followed by options: " + ANSI_PURPLE + "\nOPEN (what)\nLOOK (in a cardinal direction)\nPICK UP (what)\nDROP (what)\nTALK (to whom)\nATTACK (what, with what weapon)\nMONEY BALANCE" + ANSI_BLUE + "\nFor example, saying " +
+        TypeLine(ANSI_RED + "\nTo travel and interact, use the following keywords, followed by options: " + ANSI_PURPLE + "\nOPEN (what)\nLOOK (in a cardinal direction)\nPICK UP (what)\nDROP (what)\nTALK (to whom)\nATTACK (what, with what weapon)\nMONEY BALANCE" + ANSI_BLUE + "\n\nFor example, saying " +
                 "'OPEN backpack' shows the inventory.\nGood Luck!" + ANSI_RESET);
         while(true) {
             TypeLine(ANSI_BLUE + "\n>> " + ANSI_RESET);
