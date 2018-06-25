@@ -2,7 +2,7 @@
 
 A console game in which you are a character in a fantasy world, visiting villages and caves, fighting monsters, etc.   :P ;D
 
-_20% complete_
+_30% complete_
 
 ### Features
 
