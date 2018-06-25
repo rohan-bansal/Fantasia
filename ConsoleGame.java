@@ -96,9 +96,16 @@ class Player {
     }
 
     void buy(String[] place, String ite, int moneh) throws java.lang.InterruptedException{
+        int tempor;
+        tempor = money - moneh;
         for(String element : place) {
             if(element.equals(ite)) {
-                money -= moneh;
+                if(tempor < 0) {
+                    use.TypeLine("\u001B[31m" + "ERROR: Not enough money." + "\u001B[0m");
+                    break;
+                } else {
+                    money -= moneh;
+                }
                 currentIndex++;
                 inventory[currentIndex] = ite.substring(3);
                 use.created_items.put(ite.substring(3), new Item(ite.substring(3), "An item bought from the marketplace.", 50));
@@ -170,7 +177,7 @@ class Professions {
                 use.TypeLine("\u001B[37m" + "$" + blacksmithPrices[part] + "--\n" + "\u001B[0m");
             }
 
-            if(args[1].equals("true")) {
+            if(args.length > 1 && args[1].equals("true")) {
                 System.out.print(" ");
             } else {
                 this.buy(user, "blacksmith");
