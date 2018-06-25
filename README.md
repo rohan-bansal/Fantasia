@@ -33,3 +33,9 @@ _30% complete_
 3. Double click the file OR open a terminal and do the following:
 4. navigate into the directory
 5. type `java -jar ConsoleGame.jar`
+
+
+COLOR EXAMPLE on LINUX - Ubuntu 16.04
+
+![alt text](https://github.com/Rohan-Bansal/Fantasy-RPG/blob/master/Images/Game_Start.png "Game Starting")
+
