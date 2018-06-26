@@ -429,7 +429,7 @@ public class ConsoleGame {
                         user.inventory[x] = null;
                         TypeLine(ANSI_YELLOW + "You ate (or drank) " + temp + '.' + ANSI_RESET);
                     } else {
-                        TypeLine(ANSI_RED + "You are at full health." + ANSI_RESET);
+                        TypeLine(ANSI_RED + "You are at full health, and therefore cannot eat right now." + ANSI_RESET);
                     }
                 } else {
                     TypeLine(ANSI_RED + "You do not have any " + temp + "." + ANSI_RESET);
