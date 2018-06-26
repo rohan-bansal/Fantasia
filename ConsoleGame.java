@@ -25,15 +25,6 @@ class Item {
         if(Type.equals("name")) return name;
         return "Blank";
     }
-
-    void use(Player user) throws java.lang.InterruptedException{
-        switch(type_) {
-            case "f":
-                assert(true);
-            default:
-
-        }
-    }
 }
 //----------------------------------------------------
 //----------------------------------------------------
