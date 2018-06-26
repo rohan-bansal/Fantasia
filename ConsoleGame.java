@@ -1,23 +1,38 @@
+import com.sun.deploy.util.ArrayUtil;
+import org.apache.commons.text.WordUtils;
+
 import java.util.*;
 import java.lang.*;
 import java.util.concurrent.TimeUnit;
 
 //----------------------------------------------------
 class Item {
+    ConsoleGame use = new ConsoleGame();
     String name;
     String lore;
     int durability;
+    String type_;
 
-    Item(String nameL, String loreL, int durabilityL) {
+    Item(String nameL, String loreL, int durabilityL, String type) {
         name = nameL;
         lore = loreL;
         durability = durabilityL;
+        type_ = type;
     }
 
     String getAttr(String Type) {
         if(Type.equals("lore")) return lore;
         if(Type.equals("name")) return name;
         return "Blank";
+    }
+
+    void use(Player user) throws java.lang.InterruptedException{
+        switch(type_) {
+            case "f":
+                assert(true);
+            default:
+
+        }
     }
 }
 //----------------------------------------------------
@@ -100,7 +115,8 @@ class Player {
         int prevdmg = weaponDmg;
         String[] tempor2 = ite.split("");
         for(String element : place) {
-            if(element.equals(ite)) {
+                String type;
+if(element.equals(ite)) {
                 if(tempor < 0) {
                     use.TypeLine("\u001B[31m" + "ERROR: Not enough money." + "\u001B[0m");
                     break;
@@ -110,10 +126,10 @@ class Player {
                 currentIndex++;
                 if(names.equals("b")) {
                     inventory[currentIndex] = ite;
-                    use.created_items.put(ite, new Item(ite, "An item bought from the marketplace.", 50));
+                    use.created_items.put(ite, new Item(ite, "An item bought from the marketplace.", 50, names));
                 } else {
                     inventory[currentIndex] = ite.substring(3);
-                    use.created_items.put(ite, new Item(ite.substring(3), "An item bought from the marketplace.", 50));
+                    use.created_items.put(ite, new Item(ite.substring(3), "An item bought from the marketplace.", 50, names));
                 }
 
                 if(ite.contains("|dmg=")) {
@@ -179,7 +195,7 @@ class Professions {
     String[] blacksmithPrices = {"10", "100", "200", "300", "250", "220", "350", "50", "200"};
     String[] weaponDamage = {"4", "8", "12", "16", "16", "14", "15", "B2", "B8"};
 
-    String[] clothes = {""};
+    String[] clothes = {};
     String[] clothesPrices = {};
 
     String[] provisions = {};
@@ -188,7 +204,7 @@ class Professions {
     String[] books = {};
     String[] booksPrices = {};
 
-    String[] food = {"1. Beer", "2. Haggis", "3. Stuffulworm Pie", "4. Tacos", "5. Fish eyeball soup", "6. Chicken toes", "7. Refried beans", "8. Corn on da cob", "9. Constipation Reliever"};
+    String[] food = {"1. Beer", "2. Haggis", "3. Stuffulworm-Pie", "4. Tacos", "5. Fish-Eyeball-Soup", "6. Chicken-Toes", "7. Refried-Beans", "8. Corn-On-Da-Cob", "9. Constipation-Reliever"};
     String[] foodPrices = {"5", "10", "30", "20", "12", "3", "20", "10", "50"};
 
     Professions() {};
@@ -295,10 +311,10 @@ class Professions {
         use.TypeLine("\u001B[34m" + "Confirm purchase by typing the cost of the item: \n>> " + "\u001B[0m");
         ph2 = input_.nextLine();
         if(type_.equals("blacksmith")) user.buy(blacksmith(user, "return", "list"), blacksmith(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "b");
-        if(type_.equals("food")) user.buy(food(user, "return", "list"), food(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "e");
-        if(type_.equals("clothes")) user.buy(clothes(user, "return", "list"), clothes(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "e");
-        if(type_.equals("provisions")) user.buy(provisions(user, "return", "list"), provisions(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "e");
-        if(type_.equals("books")) user.buy(books(user, "return", "list"), books(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "e");
+        if(type_.equals("food")) user.buy(food(user, "return", "list"), food(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "f");
+        if(type_.equals("clothes")) user.buy(clothes(user, "return", "list"), clothes(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "c");
+        if(type_.equals("provisions")) user.buy(provisions(user, "return", "list"), provisions(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "p");
+        if(type_.equals("books")) user.buy(books(user, "return", "list"), books(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "o");
 
     }
 
@@ -335,7 +351,7 @@ public class ConsoleGame {
 
     public static final String[] one_word_commands = {"NORTH", "SOUTH", "EAST", "WEST", "BALANCE", "blacksmith", "food", "clothes", "provisions", "books", "exit"};
 
-    public static final HashMap<String, Item> created_items = new HashMap<>();
+    public static final Map<String, Item> created_items = new HashMap<>();
 
     static void TypeLine(String line) throws java.lang.InterruptedException {
         for (int i = 0; i < line.length(); i++) {
@@ -359,6 +375,16 @@ public class ConsoleGame {
 
     static String generateSituation() {
         return "Blank";
+    }
+
+    static String toTitleCase(String givenString) {
+        String[] arr = givenString.split(" ");
+        StringBuffer sb = new StringBuffer();
+
+        for (int i = 0; i < arr.length; i++) {
+            sb.append(Character.toUpperCase(arr[i].charAt(0))).append(arr[i].substring(1)).append(" ");
+        }
+        return sb.toString().trim();
     }
 
     static void keywords(Player user, String word, Scanner input, String... extras) throws java.lang.InterruptedException {
@@ -400,10 +426,30 @@ public class ConsoleGame {
                 }
             }
         } else {
-            if(word.equals("OPEN") && extras[0].equals("backpack")) {
-                user.seeInventory();
+            if(word.equals("OPEN")) {
+                if(extras[0].equals("backpack")) {
+                    user.seeInventory();
+                }
+            } else if(word.equals("EAT")) {
+                String temp = toTitleCase(extras[0]);
+                if(Arrays.asList(user.inventory).contains(temp)) {
+                    if(user.HP < 50) {
+                        user.HP = 50;
+                        for(int u = 0; u < user.inventory.length; u++) {
+                            System.out.println(user.inventory[u]);
+                            System.out.println(temp);
+                            if(user.inventory[u].equals(temp)) user.inventory[u] = null;
+                        }
+                        TypeLine(ANSI_YELLOW + "\nYou ate (or drank) " + temp + '.' + ANSI_RESET);
+                    } else {
+                        TypeLine(ANSI_RED + "You are at full health." + ANSI_RESET);
+                    }
+                } else {
+                    TypeLine(ANSI_RED + "You do not have any " + temp + "." + ANSI_RESET);
+                }
             } else {
                 TypeLine(ANSI_RED + "ERROR: Option not recognized." + ANSI_RESET);
+
             }
         }
     }
@@ -411,7 +457,7 @@ public class ConsoleGame {
     static void gameLoop(String placeholder, String first_name, String last_name, String classname, Scanner input, Player user) throws java.lang.InterruptedException {
 
         //INITIALIZATIONS
-        created_items.put("backpack", new Item("Basic Backpack", "An essential item used to carry objects.", 200));
+        created_items.put("backpack", new Item("Basic Backpack", "An essential item used to carry objects.", 200, "p"));
 
         String placeholder2;
         String[] keys;
@@ -453,6 +499,10 @@ public class ConsoleGame {
 
         TypeLine(ANSI_BLUE + "---------------Welcome to Fantasy RPG---------------\n\n" + ANSI_GREEN + "Choose a player class: \n\t1. Adventurer\n\t2. Treasure Hunter\n\t3. Merchant\n\t4. Rogue Thief\n\n" + ANSI_RED + "Input a number >> " + ANSI_RESET);
         placeholder = input.nextLine();
+        if(placeholder.equals("0")) {
+            Player user = new Player("joe bob", classes.get(1));
+            gameLoop(placeholder, "joe", "bob", "Adventurer", input, user);
+        }
         placeholder2 = Integer.parseInt(placeholder);
         TypeLine(ANSI_RED + "What is the name of your character? (first and last names) >> " + ANSI_RESET);
         placeholder = input.nextLine();
