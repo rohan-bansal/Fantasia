@@ -159,7 +159,7 @@ if(element.equals(ite)) {
     }
 
     void seeInventory() throws java.lang.InterruptedException {
-        use.TypeLine("\u001B[34m" + "\nCurrent inventory consists of: \n\n" + "\u001B[0m");
+        use.TypeLine("\n");
         for(String part : inventory) {
             if (part == null) {
                 use.TypeLine(" ");
@@ -340,7 +340,7 @@ public class ConsoleGame {
         put(4, "Rogue");
     }};
 
-    public static final String[] one_word_commands = {"NORTH", "SOUTH", "EAST", "WEST", "BALANCE", "blacksmith", "food", "clothes", "provisions", "books", "exit"};
+    public static final String[] one_word_commands = {"NORTH", "SOUTH", "EAST", "WEST", "BALANCE", "blacksmith", "food", "clothes", "provisions", "books", "exit", "HP"};
 
     public static final Map<String, Item> created_items = new HashMap<>();
 
@@ -406,13 +406,15 @@ public class ConsoleGame {
                             default:
                                 TypeLine(ANSI_RED + "ERROR: Unknown market." + ANSI_RESET);
                         }
-                    } else {
+                    } else if(w == 10) {
                         TypeLine(ANSI_WHITE + "Are you sure? " + ANSI_BLACK + "[" + ANSI_GREEN + "y" + ANSI_BLACK + "/" + ANSI_RED + "n" + ANSI_BLACK + "]\n>> " + ANSI_RESET);
                         if(input.nextLine().equals("y")) {
                             System.exit(0);
                         } else {
 
                         }
+                    } else {
+                        TypeLine(ANSI_YELLOW + "You are currently at " + user.HP + " health points." + ANSI_RESET);
                     }
                 }
             }
@@ -426,21 +428,19 @@ public class ConsoleGame {
                 if(Arrays.asList(user.inventory).contains(temp)) {
                     if(user.HP < 50) {
                         user.HP = 50;
-                        for(int u = 0; u < user.inventory.length; u++) {
-                            System.out.println(user.inventory[u]);
-                            System.out.println(temp);
-                            if(user.inventory[u].equals(temp)) user.inventory[u] = null;
-                        }
-                        TypeLine(ANSI_YELLOW + "\nYou ate (or drank) " + temp + '.' + ANSI_RESET);
+                        int x = Arrays.asList(user.inventory).indexOf(temp);
+                        user.inventory[x] = null;
+                        TypeLine(ANSI_YELLOW + "You ate (or drank) " + temp + '.' + ANSI_RESET);
                     } else {
                         TypeLine(ANSI_RED + "You are at full health." + ANSI_RESET);
                     }
                 } else {
                     TypeLine(ANSI_RED + "You do not have any " + temp + "." + ANSI_RESET);
                 }
+            } else if(word.equals("DESCRIPTION")) {
+                // TODO
             } else {
                 TypeLine(ANSI_RED + "ERROR: Option not recognized." + ANSI_RESET);
-
             }
         }
     }
@@ -463,13 +463,13 @@ public class ConsoleGame {
         user.buy(prof.blacksmith(user, "return", "list"), prof.blacksmith(user, "return", "list")[Integer.parseInt(placeholder) - 1], Integer.parseInt(placeholder2), "b");
         TypeLine(ANSI_YELLOW + "\nPress Enter to continue..." + ANSI_RESET);
         input.nextLine();
-        TypeLine(ANSI_RED + "\rTo travel and interact, use the following keywords, followed by options: " + ANSI_PURPLE + "\nOPEN (what)\nLOOK (in a cardinal direction)\nPICK UP (what)\nDROP (what)\nTALK (to whom)\nATTACK (what, with what weapon)\n(cardinal direction)\nBALANCE\nDESCRIPTION (item/person)\nEAT (food/beverage)\nexit" + ANSI_BLUE + "\nFor example, saying " +
+        TypeLine(ANSI_RED + "\rTo travel and interact, use the following keywords, followed by options: " + ANSI_PURPLE + "\nOPEN (what)\nLOOK (in a cardinal direction)\nPICK UP (what)\nDROP (what)\nTALK (to whom)\nATTACK (what, with what weapon)\n(cardinal direction)\nBALANCE - (check balance)\nDESCRIPTION (item/person)\nEAT (food/beverage)\nHP - (check health points)\nexit - (to quit)" + ANSI_BLUE + "\nFor example, saying " +
                 "'OPEN backpack' shows the inventory.\nYou can explore the marketplace if you want to. (to travel to a shop, type one of the names below)" + ANSI_PURPLE + "\nblacksmith\nfood\nclothes\nprovisions\nbooks\n" + ANSI_BLUE + "When you are ready, type 'SOUTH' to exit the village.\nGood Luck!" + ANSI_RESET);
         while(true) {
             TypeLine(ANSI_BLUE + "\n>> " + ANSI_RESET);
             placeholder = input.nextLine();
             keys = placeholder.split(" ");
-            if(keys[0].equals("SOUTH") || keys[0].equals("NORTH") || keys[0].equals("WEST") || keys[0].equals("EAST") || keys[0].equals("BALANCE") || keys[0].equals("blacksmith") || keys[0].equals("food") || keys[0].equals("clothes") || keys[0].equals("provisions") || keys[0].equals("books") || keys[0].equals("exit")) {
+            if(keys[0].equals("SOUTH") || keys[0].equals("NORTH") || keys[0].equals("WEST") || keys[0].equals("EAST") || keys[0].equals("BALANCE") || keys[0].equals("blacksmith") || keys[0].equals("food") || keys[0].equals("clothes") || keys[0].equals("provisions") || keys[0].equals("books") || keys[0].equals("exit") || keys[0].equals("HP")) {
                 keywords(user, keys[0], input);
             } else if(keys.length < 2) {
                 TypeLine(ANSI_RED + "ERROR: You need to specify options." + ANSI_RESET);
