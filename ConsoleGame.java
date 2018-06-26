@@ -473,6 +473,9 @@ public class ConsoleGame {
             TypeLine(ANSI_BLUE + "\nZedmore is a small town on the west coast of Lotria's main continent. It is not close to water, but it is possible to travel to the beach in a few hours on horseback. The town is mainly used by " +
                     "travelers as a rest stop. Zedmore consists of about 10 houses, a market (blacksmith, clothing, food, etc.), and a town hall. \n" + ANSI_RESET);
             gameLoop(placeholder, first_name, last_name, classname, input, user);
+        } else {
+            TypeLine(ANSI_RED + "Not a valid argument. Anyways, continuing story...\n" + ANSI_RESET);
+            gameLoop(placeholder, first_name, last_name, classname, input, user);
         }
     }
 }
