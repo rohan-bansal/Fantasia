@@ -79,6 +79,8 @@ class Player {
     int money = 50;
     String pclass;
     int HP = 50;
+    int weaponDmg = 2;
+    int wpnblock;
     int currentIndex = 4;
     String[] temp = new String[] {"water-bottle x2", "torch x10", "rope(10ft)", "scabbard", "rations x3"};
     String[] inventory = Arrays.copyOf(temp, 20);
@@ -86,18 +88,17 @@ class Player {
     Player(String name, String classL) {
         username = name;
         pclass = classL;
-        HashMap<String, Integer> damage = new HashMap<>();
-        ArrayList<String> weapons = new ArrayList<>();
-        damage.put("Fists", 2);
     }
 
     void talk(String to_whom) {
     ;
     }
 
-    void buy(String[] place, String ite, int moneh) throws java.lang.InterruptedException{
+    void buy(String[] place, String ite, int moneh, String names) throws java.lang.InterruptedException {
         int tempor;
         tempor = money - moneh;
+        int prevdmg = weaponDmg;
+        String[] tempor2 = ite.split("");
         for(String element : place) {
             if(element.equals(ite)) {
                 if(tempor < 0) {
@@ -107,8 +108,36 @@ class Player {
                     money -= moneh;
                 }
                 currentIndex++;
-                inventory[currentIndex] = ite.substring(3);
-                use.created_items.put(ite.substring(3), new Item(ite.substring(3), "An item bought from the marketplace.", 50));
+                if(names.equals("b")) {
+                    inventory[currentIndex] = ite;
+                    use.created_items.put(ite, new Item(ite, "An item bought from the marketplace.", 50));
+                } else {
+                    inventory[currentIndex] = ite.substring(3);
+                    use.created_items.put(ite, new Item(ite.substring(3), "An item bought from the marketplace.", 50));
+                }
+
+                if(ite.contains("|dmg=")) {
+                    for(String g : tempor2) {
+                        try
+                        {
+                            Integer.parseInt(g);
+                            weaponDmg = Integer.parseInt(g);
+                            use.TypeLine("\u001B[34m" + "Current weapon damage increased from " + prevdmg + " to " + weaponDmg + "." + "\u001B[0m");
+                        }
+                        catch(NumberFormatException ex) { }
+                    }
+                }
+                if(ite.contains("|block=")) {
+                    for(String j : tempor2) {
+                        try
+                        {
+                            Integer.parseInt(j);
+                            wpnblock = Integer.parseInt(j);
+                            use.TypeLine("\u001B[34m" + "Current shield block increased to " + wpnblock + "." + "\u001B[0m");
+                        }
+                        catch(NumberFormatException ex) { }
+                    }
+                }
                 use.TypeLine("\u001B[34m" + "\nBought item. You have $" + money + " left. Current inventory consists of: \n\n" + "\u001B[0m");
                 for(String part : inventory) {
                     if(part == null) {
@@ -146,10 +175,11 @@ class Professions {
     Scanner input_= new Scanner(System.in);
     String ph, ph2;
 
-    String[] blacksmith = {"1. Blunt Sword |dmg=4", "2. Scythe |dmg=8", "3. Cleaver |dmg=12", "4. Longsword |dmg=16", "5. BattleAxe |dmg=16", "6. Sharpened Sword |dmg=14", "7. Shapeshifting Knife |dmg=15","8. Basic Shield |block=2", "9. Large Shield |block=8"};
+    String[] blacksmith = {"Blunt Sword |dmg=4", "Scythe |dmg=8", "Cleaver |dmg=12", "Longsword |dmg=16", "BattleAxe |dmg=16", "Sharpened Sword |dmg=14", "Shapeshifting Knife |dmg=15","Basic Shield |block=2", "Large Shield |block=8"};
     String[] blacksmithPrices = {"10", "100", "200", "300", "250", "220", "350", "50", "200"};
+    String[] weaponDamage = {"4", "8", "12", "16", "16", "14", "15", "B2", "B8"};
 
-    String[] clothes = {};
+    String[] clothes = {""};
     String[] clothesPrices = {};
 
     String[] provisions = {};
@@ -169,12 +199,13 @@ class Professions {
         if(args[0].equals("return")) {
             if(args[1].equals("list")) return blacksmith;
             if(args[1].equals("prices")) return blacksmithPrices;
+            if(args[1].equals("damage")) return weaponDamage;
         } else if(args[0].equals("begin")) {
             smith.talk();
             use.TypeLine("\u001B[37m" + "Here are the items I sell: \n\n" + "\u001B[0m");
             for(int part = 0; part < blacksmith.length; part++) {
-                use.TypeLine("\u001B[37m" + "\t" + blacksmith[part] + " --costs " + "\u001B[0m");
-                use.TypeLine("\u001B[37m" + "$" + blacksmithPrices[part] + "--\n" + "\u001B[0m");
+                use.TypeLine("\u001B[37m" + "\t" + (part+1) + ". " + blacksmith[part] + " --costs ");
+                use.TypeLine("$" + blacksmithPrices[part] + "--\n" + "\u001B[0m");
             }
 
             if(args.length > 1 && args[1].equals("true")) {
@@ -263,11 +294,11 @@ class Professions {
         ph = input_.nextLine();
         use.TypeLine("\u001B[34m" + "Confirm purchase by typing the cost of the item: \n>> " + "\u001B[0m");
         ph2 = input_.nextLine();
-        if(type_.equals("blacksmith")) user.buy(blacksmith(user, "return", "list"), blacksmith(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2));
-        if(type_.equals("food")) user.buy(food(user, "return", "list"), food(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2));
-        if(type_.equals("clothes")) user.buy(clothes(user, "return", "list"), clothes(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2));
-        if(type_.equals("provisions")) user.buy(provisions(user, "return", "list"), provisions(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2));
-        if(type_.equals("books")) user.buy(books(user, "return", "list"), books(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2));
+        if(type_.equals("blacksmith")) user.buy(blacksmith(user, "return", "list"), blacksmith(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "b");
+        if(type_.equals("food")) user.buy(food(user, "return", "list"), food(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "e");
+        if(type_.equals("clothes")) user.buy(clothes(user, "return", "list"), clothes(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "e");
+        if(type_.equals("provisions")) user.buy(provisions(user, "return", "list"), provisions(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "e");
+        if(type_.equals("books")) user.buy(books(user, "return", "list"), books(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "e");
 
     }
 
@@ -302,7 +333,7 @@ public class ConsoleGame {
         put(4, "Rogue");
     }};
 
-    public static final String[] one_word_commands = {"NORTH", "SOUTH", "EAST", "WEST", "BALANCE", "blacksmith", "food", "clothes", "provisions", "books"};
+    public static final String[] one_word_commands = {"NORTH", "SOUTH", "EAST", "WEST", "BALANCE", "blacksmith", "food", "clothes", "provisions", "books", "exit"};
 
     public static final HashMap<String, Item> created_items = new HashMap<>();
 
@@ -313,31 +344,32 @@ public class ConsoleGame {
         }
     }
 
-    static String direction(String cardinal, String... extraargs) {
+    static void direction(String cardinal, String... extraargs) throws java.lang.InterruptedException {
         if(extraargs.length > 0) {
             if(extraargs[0].equals("Blacksmith")) {
                 if(!cardinal.equals("SOUTH")) {
-                    System.out.print("SOUTH it is :P\n");
+                    System.out.print("You have to travel south for now.\n");
                 }
-                return ANSI_BLUE + "You travel south through a bustling marketplace full of exotic items, and come to the blacksmith's shop." + ANSI_RESET;
+                TypeLine(ANSI_BLUE + "You travel south through a bustling marketplace full of exotic items, and come to the blacksmith's shop." + ANSI_RESET);
             }
+        } else {
+            TypeLine(ANSI_BLUE + "Blank - " + cardinal + ANSI_RESET);
         }
-        return ANSI_BLUE + "Blank" + ANSI_RESET;
     }
 
     static String generateSituation() {
         return "Blank";
     }
 
-    static void keywords(Player user, String word, String... extras) throws java.lang.InterruptedException {
+    static void keywords(Player user, String word, Scanner input, String... extras) throws java.lang.InterruptedException {
         if(extras.length < 1) {
             for(int w = 0; w < one_word_commands.length; w++) {
                 if(one_word_commands[w].equals(word)) {
                     if(w < 4) {
-                        TypeLine(direction(word));
+                        direction(word);
                     } else if(w == 4) {
                         TypeLine(ANSI_YELLOW + "You have a balance of $" + user.money + "." + ANSI_RESET);
-                    } else {
+                    } else if(w > 4 && w < 10){
                         switch(word) {
                             case "blacksmith":
                                 prof.blacksmith(user, "begin");
@@ -356,6 +388,13 @@ public class ConsoleGame {
                                 break;
                             default:
                                 TypeLine(ANSI_RED + "ERROR: Unknown market." + ANSI_RESET);
+                        }
+                    } else {
+                        TypeLine(ANSI_WHITE + "Are you sure? " + ANSI_BLACK + "[" + ANSI_GREEN + "y" + ANSI_BLACK + "/" + ANSI_RED + "n" + ANSI_BLACK + "]\n>> " + ANSI_RESET);
+                        if(input.nextLine().equals("y")) {
+                            System.exit(0);
+                        } else {
+
                         }
                     }
                 }
@@ -378,25 +417,27 @@ public class ConsoleGame {
         String[] keys;
         TypeLine(ANSI_BLUE + "You do not have any weapon, so you should visit the blacksmith, who is in the market (SOUTH). Type SOUTH (all caps).\n>> " + ANSI_RESET);
         placeholder = input.nextLine();
-        TypeLine(direction(placeholder, "Blacksmith"));
+        direction(placeholder, "Blacksmith");
         prof.blacksmith(user, "begin", "true");
         TypeLine(ANSI_BLUE + "\nYou have $" + user.money + ". Buy the Blunt Sword, for now. Type '1' [the number of the weapon]\n>> ");
         placeholder = input.nextLine();
         TypeLine(ANSI_BLUE + "Confirm Purchase by typing the amount of money for the item (10).\n>> " + ANSI_RESET);
         placeholder2 = input.nextLine();
-        user.buy(prof.blacksmith(user, "return", "list"), prof.blacksmith(user, "return", "list")[Integer.parseInt(placeholder) - 1], Integer.parseInt(placeholder2));
-        TypeLine(ANSI_RED + "\nTo travel and interact, use the following keywords, followed by options: " + ANSI_PURPLE + "\nOPEN (what)\nLOOK (in a cardinal direction)\nPICK UP (what)\nDROP (what)\nTALK (to whom)\nATTACK (what, with what weapon)\n(cardinal direction)\nBALANCE\nDESCRIPTION (item/person)\nEAT (food/beverage)" + ANSI_BLUE + "\n\nFor example, saying " +
+        user.buy(prof.blacksmith(user, "return", "list"), prof.blacksmith(user, "return", "list")[Integer.parseInt(placeholder) - 1], Integer.parseInt(placeholder2), "b");
+        TypeLine(ANSI_YELLOW + "\nPress Enter to continue..." + ANSI_RESET);
+        input.nextLine();
+        TypeLine(ANSI_RED + "\rTo travel and interact, use the following keywords, followed by options: " + ANSI_PURPLE + "\nOPEN (what)\nLOOK (in a cardinal direction)\nPICK UP (what)\nDROP (what)\nTALK (to whom)\nATTACK (what, with what weapon)\n(cardinal direction)\nBALANCE\nDESCRIPTION (item/person)\nEAT (food/beverage)\nexit" + ANSI_BLUE + "\nFor example, saying " +
                 "'OPEN backpack' shows the inventory.\nYou can explore the marketplace if you want to. (to travel to a shop, type one of the names below)" + ANSI_PURPLE + "\nblacksmith\nfood\nclothes\nprovisions\nbooks\n" + ANSI_BLUE + "When you are ready, type 'SOUTH' to exit the village.\nGood Luck!" + ANSI_RESET);
         while(true) {
             TypeLine(ANSI_BLUE + "\n>> " + ANSI_RESET);
             placeholder = input.nextLine();
             keys = placeholder.split(" ");
-            if(keys[0].equals("SOUTH") || keys[0].equals("NORTH") || keys[0].equals("WEST") || keys[0].equals("EAST") || keys[0].equals("BALANCE") || keys[0].equals("blacksmith") || keys[0].equals("food") || keys[0].equals("clothes") || keys[0].equals("provisions") || keys[0].equals("books")) {
-                keywords(user, keys[0]);
+            if(keys[0].equals("SOUTH") || keys[0].equals("NORTH") || keys[0].equals("WEST") || keys[0].equals("EAST") || keys[0].equals("BALANCE") || keys[0].equals("blacksmith") || keys[0].equals("food") || keys[0].equals("clothes") || keys[0].equals("provisions") || keys[0].equals("books") || keys[0].equals("exit")) {
+                keywords(user, keys[0], input);
             } else if(keys.length < 2) {
                 TypeLine(ANSI_RED + "ERROR: You need to specify options." + ANSI_RESET);
             } else {
-                keywords(user, keys[0], keys[1]);
+                keywords(user, keys[0], input, keys[1]);
             }
         }
     }
