@@ -83,7 +83,7 @@ class Player {
     String pclass;
     int HP = 50;
     int weaponDmg = 2;
-    int wpnblock;
+    double wpnblock;
     int currentIndex = 4;
     String[] temp = new String[] {"water-bottle x2", "torch x10", "rope(10ft)", "scabbard", "rations x3"};
     String[] inventory = Arrays.copyOf(temp, 20);
@@ -136,8 +136,14 @@ if(element.equals(ite)) {
                         try
                         {
                             Integer.parseInt(j);
-                            wpnblock = Integer.parseInt(j);
-                            use.TypeLine("\u001B[34m" + "Current shield block increased to " + wpnblock + "." + "\u001B[0m");
+                            if(names.equals("c")) {
+                                wpnblock += Integer.parseInt(j);
+                                use.TypeLine("\u001B[34m" + "Current shield block increased to " + wpnblock + "." + "\u001B[0m");
+                            } else {
+                                wpnblock = Integer.parseInt(j);
+                                use.TypeLine("\u001B[34m" + "Current shield block increased to " + wpnblock + "." + "\u001B[0m");
+                            }
+
                         }
                         catch(NumberFormatException ex) { }
                     }
@@ -181,10 +187,9 @@ class Professions {
 
     String[] blacksmith = {"Blunt Sword |dmg=4", "Scythe |dmg=8", "Cleaver |dmg=12", "Longsword |dmg=16", "BattleAxe |dmg=16", "Sharpened Sword |dmg=14", "Shapeshifting Knife |dmg=15","Basic Shield |block=2", "Large Shield |block=8"};
     String[] blacksmithPrices = {"10", "100", "200", "300", "250", "220", "350", "50", "200"};
-    String[] weaponDamage = {"4", "8", "12", "16", "16", "14", "15", "B2", "B8"};
 
-    String[] clothes = {};
-    String[] clothesPrices = {};
+    String[] clothes = {"1. Chainmail Armor |block=1", "2. HardLeather Armor |block-2", "3. Boots |block=1", "4. Metallic Armor |block=3", "5. Knight Suit |block=3"};
+    String[] clothesPrices = {"50", "70", "20", "300", "300"};
 
     String[] provisions = {};
     String[] provisionsPrices = {};
@@ -203,7 +208,6 @@ class Professions {
         if(args[0].equals("return")) {
             if(args[1].equals("list")) return blacksmith;
             if(args[1].equals("prices")) return blacksmithPrices;
-            if(args[1].equals("damage")) return weaponDamage;
         } else if(args[0].equals("begin")) {
             smith.talk();
             use.TypeLine("\u001B[37m" + "Here are the items I sell: \n\n" + "\u001B[0m");
@@ -393,6 +397,10 @@ public class ConsoleGame {
         return "Blank";
     }
 
+    static void attack() {
+
+    }
+
     static String toTitleCase(String givenString) {
         String[] arr = givenString.split(" ");
         StringBuffer sb = new StringBuffer();
@@ -487,6 +495,12 @@ public class ConsoleGame {
                     TypeLine(ANSI_YELLOW + "Picked up " + extras[0] + ". " + ANSI_RESET);
                     user.currentIndex += 1;
                 }
+            } else if(word.equals("ATTACK")) {
+                if(in_village) {
+                    TypeLine(ANSI_RED + "You cannot attack anyone here." + ANSI_RESET);
+                } else {
+                    attack();
+                }
             } else {
                 TypeLine(ANSI_RED + "ERROR: Keyword (or option) not recognized." + ANSI_RESET);
             }
@@ -513,7 +527,7 @@ public class ConsoleGame {
         user.buy(prof.blacksmith(user, "return", "list"), prof.blacksmith(user, "return", "list")[Integer.parseInt(placeholder) - 1], Integer.parseInt(placeholder2), "b");
         TypeLine(ANSI_YELLOW + "\nPress Enter to continue..." + ANSI_RESET);
         input.nextLine();
-        TypeLine(ANSI_RED + "\rTo travel and interact, use the following keywords, followed by options: " + ANSI_PURPLE + "\nOPEN (what)\nLOOK (in a cardinal direction)\nPICK-UP (what)\nDROP (what)\nTALK (to whom)\nATTACK (what, with what weapon)\n(cardinal direction)\nBALANCE - (check balance)\nDESCRIPTION (item/person)\nEAT (food/beverage)\nHP - (check health points)\nexit - (to quit)" + ANSI_BLUE + "\nFor example, saying " +
+        TypeLine(ANSI_RED + "\rTo travel and interact, use the following keywords, followed by options: " + ANSI_PURPLE + "\nOPEN (what)\nLOOK (in a cardinal direction)\nPICK-UP (what)\nDROP (what)\nATTACK (what, with what weapon)\n(cardinal direction)\nBALANCE - (check balance)\nEAT (food/beverage)\nHP - (check health points)\nexit - (to quit)" + ANSI_BLUE + "\nFor example, saying " +
                 "'OPEN backpack' shows the inventory.\nYou can explore the marketplace if you want to. (to travel to a shop, type one of the names below)" + ANSI_PURPLE + "\nblacksmith\nfood\nclothes\nprovisions\nbooks\n" + ANSI_BLUE + "When you are ready, type 'SOUTH' to exit the village.\nGood Luck!" + ANSI_RESET);
         while(true) {
             TypeLine(ANSI_BLUE + "\n>> " + ANSI_RESET);
