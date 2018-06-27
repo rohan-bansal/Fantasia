@@ -308,13 +308,19 @@ class Professions {
 
 }
 //--------------------------------------------------------
-
+//TODO situation class and village class
+//TODO change in_village boolean
+//TODO refresh on_floor array
 
 
 public class ConsoleGame {
 
     public static String current_location = "Zedmore";
     public static boolean in_village = true;
+    public static boolean in_forest = false;
+    public static boolean in_cave = false;
+
+    public static ArrayList<String> on_floor = new ArrayList<>();
 
     public static final String ANSI_RESET = "\u001B[0m";
 
@@ -329,7 +335,6 @@ public class ConsoleGame {
 
     public static final Professions prof = new Professions();
 
-
     public static final HashMap<Integer, String> classes = new HashMap<Integer, String>() {{
         put(1, "Adventurer");
         put(2, "Treasure Hunter");
@@ -338,13 +343,35 @@ public class ConsoleGame {
     }};
 
     public static final String[] one_word_commands = {"NORTH", "SOUTH", "EAST", "WEST", "BALANCE", "blacksmith", "food", "clothes", "provisions", "books", "exit", "HP"};
-
     public static final Map<String, Item> created_items = new HashMap<>();
+
+    public static final HashMap<String, String> look_village = new HashMap<String, String>() {{
+        put("NORTH", "You have a view of the clock tower.");
+        put("SOUTH", "You can see the spire of the church.");
+        put("EAST", "A small row of houses can just be seen over the market's wall.");
+        put("WEST", "The setting sun makes the makes the sky have an orange tinge.");
+    }};
+
+    public static final HashMap<String, String> look_forest = new HashMap<String, String>() {{
+        put("NORTH", "You see trees as far as the eye can see.");
+        put("SOUTH", "There are a few brambles.");
+        put("EAST", "About 1/2 mile off, a steep stone mountain wall climbs 100 feet high.");
+        put("WEST", "Vines hang from every tree.");
+    }};
+
+    public static final HashMap<String, String> look_cave = new HashMap<String, String>() {{
+        put("NORTH", "You see light coming out a crevice the size of a pinhole.");
+        put("SOUTH", "There are a few huge  boulders around.");
+        put("EAST", "Farther down the cave, a natural chimney climbs 100 feet.");
+        put("WEST", "You glance at your entrance point.");
+    }};
+
+
 
     static void TypeLine(String line) throws java.lang.InterruptedException {
         for (int i = 0; i < line.length(); i++) {
             System.out.print(line.charAt(i));
-            TimeUnit.MILLISECONDS.sleep(20);
+            TimeUnit.MILLISECONDS.sleep(10);
         }
     }
 
@@ -358,6 +385,7 @@ public class ConsoleGame {
             }
         } else {
             TypeLine(ANSI_BLUE + "Blank - " + cardinal + ANSI_RESET);
+
         }
     }
 
@@ -434,21 +462,46 @@ public class ConsoleGame {
                 } else {
                     TypeLine(ANSI_RED + "You do not have any " + temp + "." + ANSI_RESET);
                 }
-            } else if(word.equals("DESCRIPTION")) {
-                // TODO
+            } else if(word.equals("LOOK")) {
+                if(in_village) {
+                    TypeLine(ANSI_YELLOW + look_village.get(extras[0].toUpperCase()) + ANSI_RESET);
+                } else if(!in_village && !in_cave && in_forest) {
+                    TypeLine(ANSI_YELLOW + look_forest.get(extras[0].toUpperCase()) + ANSI_RESET);
+                } else if(!in_village && !in_forest && in_cave){
+                    TypeLine(ANSI_YELLOW + look_cave.get(extras[0].toUpperCase()) + ANSI_RESET);
+                }
+            } else if(word.equals("DROP")) {
+                if(Arrays.asList(user.inventory).contains(extras[0])) {
+                    user.inventory[Arrays.asList(user.inventory).indexOf(extras[0])] = null;
+                    TypeLine(ANSI_YELLOW + "Dropped " + extras[0] + ". " + ANSI_RESET);
+                    on_floor.add(extras[0]);
+                    user.currentIndex -= 1;
+                }
+
+            } else if(word.equals("PICK-UP")) {
+                if(on_floor.isEmpty()) {
+                    TypeLine(ANSI_RED + "ERROR: Nothing to pick up." + ANSI_RESET);
+                } else {
+                    user.inventory[user.currentIndex] = extras[0];
+                    on_floor.remove(extras[0]);
+                    TypeLine(ANSI_YELLOW + "Picked up " + extras[0] + ". " + ANSI_RESET);
+                    user.currentIndex += 1;
+                }
             } else {
-                TypeLine(ANSI_RED + "ERROR: Option not recognized." + ANSI_RESET);
+                TypeLine(ANSI_RED + "ERROR: Keyword (or option) not recognized." + ANSI_RESET);
             }
         }
     }
 
-    static void gameLoop(String placeholder, String first_name, String last_name, String classname, Scanner input, Player user) throws java.lang.InterruptedException {
+    static void gameLoop(String first_name, String last_name, String classname, Scanner input, Player user) throws java.lang.InterruptedException {
 
         //INITIALIZATIONS
         created_items.put("backpack", new Item("Basic Backpack", "An essential item used to carry objects.", 200, "p"));
 
+        String placeholder;
         String placeholder2;
         String[] keys;
+
         TypeLine(ANSI_BLUE + "You do not have any weapon, so you should visit the blacksmith, who is in the market (SOUTH). Type SOUTH (all caps).\n>> " + ANSI_RESET);
         placeholder = input.nextLine();
         direction(placeholder, "Blacksmith");
@@ -460,7 +513,7 @@ public class ConsoleGame {
         user.buy(prof.blacksmith(user, "return", "list"), prof.blacksmith(user, "return", "list")[Integer.parseInt(placeholder) - 1], Integer.parseInt(placeholder2), "b");
         TypeLine(ANSI_YELLOW + "\nPress Enter to continue..." + ANSI_RESET);
         input.nextLine();
-        TypeLine(ANSI_RED + "\rTo travel and interact, use the following keywords, followed by options: " + ANSI_PURPLE + "\nOPEN (what)\nLOOK (in a cardinal direction)\nPICK UP (what)\nDROP (what)\nTALK (to whom)\nATTACK (what, with what weapon)\n(cardinal direction)\nBALANCE - (check balance)\nDESCRIPTION (item/person)\nEAT (food/beverage)\nHP - (check health points)\nexit - (to quit)" + ANSI_BLUE + "\nFor example, saying " +
+        TypeLine(ANSI_RED + "\rTo travel and interact, use the following keywords, followed by options: " + ANSI_PURPLE + "\nOPEN (what)\nLOOK (in a cardinal direction)\nPICK-UP (what)\nDROP (what)\nTALK (to whom)\nATTACK (what, with what weapon)\n(cardinal direction)\nBALANCE - (check balance)\nDESCRIPTION (item/person)\nEAT (food/beverage)\nHP - (check health points)\nexit - (to quit)" + ANSI_BLUE + "\nFor example, saying " +
                 "'OPEN backpack' shows the inventory.\nYou can explore the marketplace if you want to. (to travel to a shop, type one of the names below)" + ANSI_PURPLE + "\nblacksmith\nfood\nclothes\nprovisions\nbooks\n" + ANSI_BLUE + "When you are ready, type 'SOUTH' to exit the village.\nGood Luck!" + ANSI_RESET);
         while(true) {
             TypeLine(ANSI_BLUE + "\n>> " + ANSI_RESET);
@@ -489,7 +542,7 @@ public class ConsoleGame {
         placeholder = input.nextLine();
         if(placeholder.equals("0")) {
             Player user = new Player("joe bob", classes.get(1));
-            gameLoop(placeholder, "joe", "bob", "Adventurer", input, user);
+            gameLoop("joe", "bob", "Adventurer", input, user);
         }
         placeholder2 = Integer.parseInt(placeholder);
         TypeLine(ANSI_RED + "What is the name of your character? (first and last names) >> " + ANSI_RESET);
@@ -506,14 +559,14 @@ public class ConsoleGame {
                 "magical creatures exist as well. (Giant spiders, ogres, occasional giant, unicorns, etc.) You live in the small town of Zedmore.\n\n\tTo start the adventure, type 'go'.\n\tInformation on Zedmore, type 'info'.\n>> " + ANSI_RESET);
         placeholder = input.nextLine();
         if(placeholder.equals("go")) {
-            gameLoop(placeholder, first_name, last_name, classname, input, user);
+            gameLoop(first_name, last_name, classname, input, user);
         } else if(placeholder.equals("info")) {
             TypeLine(ANSI_BLUE + "\nZedmore is a small town on the west coast of Lotria's main continent. It is not close to water, but it is possible to travel to the beach in a few hours on horseback. The town is mainly used by " +
                     "travelers as a rest stop. Zedmore consists of about 10 houses, a market (blacksmith, clothing, food, etc.), and a town hall. \n" + ANSI_RESET);
-            gameLoop(placeholder, first_name, last_name, classname, input, user);
+            gameLoop(first_name, last_name, classname, input, user);
         } else {
             TypeLine(ANSI_RED + "Not a valid argument. Anyways, continuing story...\n" + ANSI_RESET);
-            gameLoop(placeholder, first_name, last_name, classname, input, user);
+            gameLoop(first_name, last_name, classname, input, user);
         }
     }
 }
