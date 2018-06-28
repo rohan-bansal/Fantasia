@@ -4,7 +4,6 @@ import java.util.concurrent.TimeUnit;
 
 //----------------------------------------------------
 class Item {
-    ConsoleGame use = new ConsoleGame();
     String name;
     String lore;
     int durability;
@@ -56,15 +55,6 @@ class Entity {
 
     }
 
-    String getAttr(String Type) {
-        if(Type.equals("name")) return name;
-        if(Type.equals("description")) return description;
-        if(Type.equals("to_kill")) return Integer.toString(to_kill);
-        if(Type.equals("living")) return Boolean.toString(living);
-        if(Type.equals("passive")) return Boolean.toString(passive);
-        return "Blank";
-    }
-
     void talk() throws java.lang.InterruptedException {
         if(passive) {
             use.TypeLine("\u001B[37m" + "\nHi There!\n" + "\u001B[0m");
@@ -93,18 +83,13 @@ class Player {
         pclass = classL;
     }
 
-    void talk(String to_whom) {
-    ;
-    }
-
     void buy(String[] place, String ite, int moneh, String names) throws java.lang.InterruptedException {
         int tempor;
         tempor = money - moneh;
         int prevdmg = weaponDmg;
         String[] tempor2 = ite.split("");
         for(String element : place) {
-                String type;
-if(element.equals(ite)) {
+            if(element.equals(ite)) {
                 if(tempor < 0) {
                     use.TypeLine("\u001B[31m" + "ERROR: Not enough money." + "\u001B[0m");
                     break;
@@ -165,10 +150,6 @@ if(element.equals(ite)) {
             }
         }
     }
-
-    void attack(Entity mob) {
-    ;
-    }
 }
 //-------------------------------------------------------------------------
 //-------------------------------------------------------------------------
@@ -185,24 +166,16 @@ class Professions {
     String[] clothes = {"1. Chainmail Armor |block=1", "2. HardLeather Armor |block-2", "3. Boots |block=1", "4. Metallic Armor |block=3", "5. Knight Suit |block=3"};
     String[] clothesPrices = {"50", "70", "20", "300", "300"};
 
-    String[] provisions = {};
-    String[] provisionsPrices = {};
-
-    String[] books = {};
-    String[] booksPrices = {};
-
     String[] food = {"1. Beer", "2. Haggis", "3. Stuffulworm-Pie", "4. Tacos", "5. Fish-Eyeball-Soup", "6. Chicken-Toes", "7. Refried-Beans", "8. Corn-On-Da-Cob", "9. Constipation-Reliever"};
     String[] foodPrices = {"5", "10", "30", "20", "12", "3", "20", "10", "50"};
 
     public final HashMap<String, String[]> returnprices = new HashMap<String, String[]>() {{
         put("blacksmith", blacksmithPrices);
         put("clothes", clothesPrices);
-        put("provisions", provisionsPrices);
-        put("books", booksPrices);
         put("food", foodPrices);
     }};
 
-    Professions() {};
+    Professions() {}
 
     String[] blacksmith(Player user, String... args) throws java.lang.InterruptedException {
         Entity smith = new Entity(names[randomizer.nextInt(14)],"The blacksmith of " + use.current_location,20);
@@ -263,45 +236,10 @@ class Professions {
         return new String[0];
     }
 
-    String[] provisions(Player user, String... args) throws java.lang.InterruptedException {
-        Entity provider = new Entity(names[randomizer.nextInt(14)],"The item supplier of " + use.current_location,20);
-        provider.SetAttr(false, false, 5);
-        if(args[0].equals("return")) {
-            if(args[1].equals("list")) return provisions;
-            if(args[1].equals("prices")) return provisionsPrices;
-        } else if(args[0].equals("begin")) {
-            provider.talk();
-            use.TypeLine("\u001B[37m" + "Here are the items I sell: \n\n" + "\u001B[0m");
-            for(int part = 0; part < provisions.length; part++) {
-                use.TypeLine("\u001B[37m" + "\t" + provisions[part] + " --costs " + "\u001B[0m");
-                use.TypeLine("\u001B[37m" + "$" + provisionsPrices[part] + "--\n" + "\u001B[0m");
-            }
-            this.buy(user, "provisions");
-        }
-        return new String[0];
-    }
-
-    String[] books(Player user, String... args) throws java.lang.InterruptedException {
-        Entity bookie = new Entity(names[randomizer.nextInt(14)],"The librarian of " + use.current_location,20);
-        bookie.SetAttr(false, false, 5);
-        if(args[0].equals("return")) {
-            if(args[1].equals("list")) return books;
-            if(args[1].equals("prices")) return booksPrices;
-        } else if(args[0].equals("begin")) {
-            bookie.talk();
-            use.TypeLine("\u001B[37m" + "Here are the items I sell: \n\n" + "\u001B[0m");
-            for(int part = 0; part < books.length; part++) {
-                use.TypeLine("\u001B[37m" + "\t" + books[part] + " --costs " + "\u001B[0m");
-                use.TypeLine("\u001B[37m" + "$" + booksPrices[part] + "--\n" + "\u001B[0m");
-            }
-            this.buy(user, "books");
-        }
-        return new String[0];
-    }
-
     void buy(Player user, String type_) throws java.lang.InterruptedException {
-        use.TypeLine("\u001B[34m" + "\nType the number of the item you want to buy: \n>> " + "\u001B[0m");
+        use.TypeLine("\u001B[34m" + "\nType the number of the item you want to buy (to quit, type x) : \n>> " + "\u001B[0m");
         ph = input_.nextLine();
+        if(ph.equals("x")) return;
         while(true) {
             use.TypeLine("\u001B[34m" + "Confirm purchase by typing the cost of the item: \n>> " + "\u001B[0m");
             ph2 = input_.nextLine();
@@ -314,9 +252,6 @@ class Professions {
         if(type_.equals("blacksmith")) user.buy(blacksmith(user, "return", "list"), blacksmith(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "b");
         if(type_.equals("food")) user.buy(food(user, "return", "list"), food(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "f");
         if(type_.equals("clothes")) user.buy(clothes(user, "return", "list"), clothes(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "c");
-        if(type_.equals("provisions")) user.buy(provisions(user, "return", "list"), provisions(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "p");
-        if(type_.equals("books")) user.buy(books(user, "return", "list"), books(user, "return", "list")[Integer.parseInt(ph) - 1], Integer.parseInt(ph2), "o");
-
     }
 
 }
@@ -333,6 +268,10 @@ public class ConsoleGame {
     public static boolean in_forest = false;
     public static boolean in_cave = false;
     public static String to_leave;
+    public static boolean fighting = false;
+
+    public static int Mdmg;
+    public static String Mname;
 
     public static ArrayList<String> on_floor = new ArrayList<>();
 
@@ -344,11 +283,11 @@ public class ConsoleGame {
     public static final String ANSI_YELLOW = "\u001B[33m";
     public static final String ANSI_BLUE = "\u001B[34m";
     public static final String ANSI_PURPLE = "\u001B[35m";
-    public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
     public static final Professions prof = new Professions();
     public static String[] locations = {"Forest", "Cave", "Village"};
+    public static String[] monster_names = {"Zlapud", "Kwarg", "Firos", "Pabilrgaarm", "Aarog", "Pachyropuh", "Bagob", "Joe", "Incusi", "Zaquix"};
 
     public static final HashMap<Integer, String> classes = new HashMap<Integer, String>() {{
         put(1, "Adventurer");
@@ -392,11 +331,11 @@ public class ConsoleGame {
     static void TypeLine(String line) throws java.lang.InterruptedException {
         for (int i = 0; i < line.length(); i++) {
             System.out.print(line.charAt(i));
-            TimeUnit.MILLISECONDS.sleep(5);
+            TimeUnit.MILLISECONDS.sleep(20);
         }
     }
 
-    static void direction(String cardinal, String exit, Scanner input, String... extraargs) throws java.lang.InterruptedException {
+    static void direction(String cardinal, String exit, Scanner input, Player user, String... extraargs) throws java.lang.InterruptedException {
         if(extraargs.length > 0) {
             if(extraargs[0].equals("Blacksmith")) {
                 if(!cardinal.equals("SOUTH")) {
@@ -420,6 +359,12 @@ public class ConsoleGame {
                     case "Cave":
                         in_cave(opposites.get(cardinal), input);
                         break;
+                }
+            } else if(exit.equals("stay")) {
+                if(!in_village) {
+                    generateSituation(user);
+                } else {
+
                 }
             }
 
@@ -457,12 +402,70 @@ public class ConsoleGame {
 
     }
 
-    static String generateSituation() {
-        return "Blank";
+    static void generateSituation(Player user) throws java.lang.InterruptedException {
+        Mname = monster_names[new Random().nextInt(monster_names.length)];
+        if(user.weaponDmg < 5) {
+            Mdmg = 4;
+        } else if(user.weaponDmg > 5 && user.weaponDmg < 10) {
+            Mdmg = 5;
+        } else if(user.weaponDmg > 10 && user.weaponDmg < 20) {
+            Mdmg = 12;
+        }
+        Entity monster = new Entity(Mname, "A monster.", 40);
+        monster.SetAttr(true, true, 1);
+        fighting = true;
+        TypeLine(ANSI_YELLOW + "A monster approaches.\n" + ANSI_BLACK + "GRRRRRR Me am " + monster.name + ". Get ready for battle!\n" + ANSI_BLUE + "To attack, type 'ATTACK monster'.\n" + ANSI_RESET);
     }
 
-    static void attack() {
+    static void attack(Player user) throws java.lang.InterruptedException {
+        String g;
+        int ready = 1;
+        int roundnum = 0;
+        Scanner fight = new Scanner(System.in);
+        int MHP = 40;
+        TypeLine(ANSI_YELLOW + "You have entered battle with the monster. To fight, type SLASH (for a hit), and every 3 turns you can use POUND (critical hit).\n" + ANSI_RESET);
+        while(true) {
+            roundnum += 1;
+            if(roundnum == 3) {
+                roundnum = 0;
+                ready = 1;
+            }
+            if(ready == 1) TypeLine(ANSI_GREEN + "\nPOUND is ready to be used." + ANSI_RESET);
+            TypeLine(ANSI_PURPLE + "\nYour turn: " + ANSI_RESET);
+            g = fight.nextLine();
+            if(g.equals("POUND")) {
+                if(ready == 1) {
+                    MHP = MHP - (user.weaponDmg + 2);
+                    TypeLine(ANSI_GREEN + "You bring your weapon down on " + Mname + ", doing " + user.weaponDmg + " + 2 hit points of extra damage.\nMonster HP: " + MHP + "\nYour HP: " + user.HP + ANSI_RESET);
+                    ready = 0;
+                    if(checkDeath(user, MHP)) break;
+                } else {
+                    TypeLine(ANSI_YELLOW + "POUND is not ready yet, and therefore you do not attack in time." + ANSI_RESET);
+                }
+            } else if(g.equals("SLASH")) {
+                MHP = MHP - (user.weaponDmg);
+                TypeLine(ANSI_GREEN + "You slash at " + Mname + ", doing " + user.weaponDmg + " hit points of damage.\nMonster HP: " + MHP + "\nYour HP: " + user.HP + ANSI_RESET);
+                if(checkDeath(user, MHP)) break;
+            } else {
+                TypeLine(ANSI_YELLOW + "Not a valid attack, and therefore you did not attack in time." + ANSI_RESET);
+            }
+            user.HP = user.HP - Mdmg;
+            TypeLine(ANSI_RED + "\n\nMonster's turn: CLAW\nThe monster uses pure strength to deal damage.\nMonster HP: " + MHP + "\nYour HP: " + user.HP + ANSI_RESET);
+            checkDeath(user, MHP);
+        }
+    }
 
+    static boolean checkDeath(Player user, int MonsterHP) throws java.lang.InterruptedException {
+        if(user.HP <= 0) {
+            TypeLine(ANSI_WHITE + "\nThe monster killed you. Better luck next time..." + ANSI_RESET);
+            System.exit(0);
+        } else if(MonsterHP <= 0) {
+            fighting = false;
+            TypeLine(ANSI_WHITE + "\nYou killed the monster! Earned $10." + ANSI_RESET);
+            user.money += 10;
+            return true;
+        }
+        return false;
     }
 
     static String toTitleCase(String givenString) {
@@ -481,9 +484,9 @@ public class ConsoleGame {
                 if(one_word_commands[w].equals(word)) {
                     if(w < 4) {
                         if(to_leave.equals(word)) {
-                            direction(word, "leave", input);
+                            direction(word, "leave", input, user);
                         } else {
-                            direction(word, "stay", input);
+                            direction(word, "stay", input, user);
                         }
                     } else if(w == 4) {
                         TypeLine(ANSI_YELLOW + "You have a balance of $" + user.money + "." + ANSI_RESET);
@@ -498,12 +501,6 @@ public class ConsoleGame {
                                     break;
                                 case "clothes":
                                     prof.clothes(user, "begin");
-                                    break;
-                                case "provisions":
-                                    prof.provisions(user, "begin");
-                                    break;
-                                case "books":
-                                    prof.books(user, "begin");
                                     break;
                                 default:
                                     TypeLine(ANSI_RED + "ERROR: Unknown market." + ANSI_RESET);
@@ -535,7 +532,7 @@ public class ConsoleGame {
                         user.HP = 50;
                         int x = Arrays.asList(user.inventory).indexOf(temp);
                         user.inventory[x] = null;
-                        TypeLine(ANSI_YELLOW + "You ate (or drank) " + temp + '.' + ANSI_RESET);
+                        TypeLine(ANSI_YELLOW + "You ate (or drank) " + temp + ". You have been restored to full health." + ANSI_RESET);
                     } else {
                         TypeLine(ANSI_RED + "You are at full health, and therefore cannot eat right now." + ANSI_RESET);
                     }
@@ -571,7 +568,11 @@ public class ConsoleGame {
                 if(in_village) {
                     TypeLine(ANSI_RED + "You cannot attack anyone here." + ANSI_RESET);
                 } else {
-                    attack();
+                    if(fighting) {
+                        attack(user);
+                    } else {
+                        TypeLine(ANSI_RED + "There is nothing to attack." + ANSI_RESET);
+                    }
                 }
             } else {
                 TypeLine(ANSI_RED + "ERROR: Keyword (or option) not recognized." + ANSI_RESET);
@@ -579,18 +580,14 @@ public class ConsoleGame {
         }
     }
 
-    static void gameLoop(String first_name, String last_name, String classname, Scanner input, Player user) throws java.lang.InterruptedException {
-
-        //INITIALIZATIONS
-        created_items.put("backpack", new Item("Basic Backpack", "An essential item used to carry objects.", 200, "p"));
-
+    static void gameLoop(Scanner input, Player user) throws java.lang.InterruptedException {
         String placeholder;
         String placeholder2;
         String[] keys;
 
         TypeLine(ANSI_BLUE + "You do not have any weapon, so you should visit the blacksmith, who is in the market (SOUTH). Type SOUTH (all caps).\n>> " + ANSI_RESET);
         placeholder = input.nextLine();
-        direction(placeholder, "stay", input, "Blacksmith");
+        direction(placeholder, "stay", input, user, "Blacksmith");
         prof.blacksmith(user, "begin", "true");
         TypeLine(ANSI_BLUE + "\nYou have $" + user.money + ". Buy the Blunt Sword, for now. Type '1' [the number of the weapon]\n>> ");
         placeholder = input.nextLine();
@@ -608,12 +605,11 @@ public class ConsoleGame {
                 break;
             }
         }
-
         user.buy(prof.blacksmith(user, "return", "list"), prof.blacksmith(user, "return", "list")[Integer.parseInt(placeholder) - 1], Integer.parseInt(placeholder2), "b");
         TypeLine(ANSI_YELLOW + "\nPress Enter to continue..." + ANSI_RESET);
         input.nextLine();
         TypeLine(ANSI_BLUE + "\rTo travel and interact, use the following keywords, followed by options: " + ANSI_PURPLE + "\nOPEN (what)\nLOOK (in a cardinal direction)\nPICK-UP (what)\nDROP (what)\nATTACK (what, with what weapon)\n(cardinal direction)\nBALANCE - (check balance)\nEAT (food/beverage)\nHP - (check health points)\nexit - (to quit)" + ANSI_BLUE + "\nFor example, saying " +
-                "'OPEN backpack' shows the inventory.\nYou can explore the marketplace if you want to. (to travel to a shop, type one of the names below)" + ANSI_PURPLE + "\nblacksmith\nfood\nclothes\nprovisions\nbooks\n" + ANSI_BLUE + "When you are ready, type 'SOUTH' to exit the village.\nGood Luck!" + ANSI_RESET);
+                "'OPEN backpack' shows the inventory.\nYou can explore the marketplace if you want to. (to travel to a shop, type one of the names below)" + ANSI_PURPLE + "\nblacksmith\nfood\nclothes\n" + ANSI_BLUE + "When you are ready, type 'SOUTH' to exit the village.\nGood Luck!" + ANSI_RESET);
         to_leave = "SOUTH";
         while(true) {
             TypeLine(ANSI_BLUE + "\n>> " + ANSI_RESET);
@@ -642,7 +638,7 @@ public class ConsoleGame {
         placeholder = input.nextLine();
         if(placeholder.equals("0")) {
             Player user = new Player("joe bob", classes.get(1));
-            gameLoop("joe", "bob", "Adventurer", input, user);
+            gameLoop(input, user);
         }
         placeholder2 = Integer.parseInt(placeholder);
         TypeLine(ANSI_RED + "What is the name of your character? (first and last names) >> " + ANSI_RESET);
@@ -659,14 +655,14 @@ public class ConsoleGame {
                 "magical creatures exist as well. (Giant spiders, ogres, occasional giant, unicorns, etc.) You live in the small town of Zedmore.\n\n\tTo start the adventure, type 'go'.\n\tInformation on Zedmore, type 'info'.\n>> " + ANSI_RESET);
         placeholder = input.nextLine();
         if(placeholder.equals("go")) {
-            gameLoop(first_name, last_name, classname, input, user);
+            gameLoop(input, user);
         } else if(placeholder.equals("info")) {
             TypeLine(ANSI_BLUE + "\nZedmore is a small town on the west coast of Lotria's main continent. It is not close to water, but it is possible to travel to the beach in a few hours on horseback. The town is mainly used by " +
                     "travelers as a rest stop. Zedmore consists of about 10 houses, a market (blacksmith, clothing, food, etc.), and a town hall. \n" + ANSI_RESET);
-            gameLoop(first_name, last_name, classname, input, user);
+            gameLoop(input, user);
         } else {
             TypeLine(ANSI_RED + "Not a valid argument. Anyways, continuing story...\n" + ANSI_RESET);
-            gameLoop(first_name, last_name, classname, input, user);
+            gameLoop(input, user);
         }
     }
 }
