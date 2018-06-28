@@ -2,7 +2,7 @@
 
 A console game in which you are a character in a fantasy world, visiting villages and caves, fighting monsters, etc.   :P ;D
 
-_50% complete_
+_100% complete_
 
 ### Features
 
@@ -16,6 +16,7 @@ _50% complete_
 - Graphics :D
 - Support for File Saving
 - Windows terminal color support (with `JNI`) for operating systems lower than Windows 10
+- More functions for EAST, WEST, NORTH, and SOUTH
 
 ### _Changes made regularly to the .java file, finished program will be a .jar_
 
