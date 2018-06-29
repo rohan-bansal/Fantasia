@@ -31,7 +31,7 @@ _100% complete_
 
 1. Clone repository
 2. Install java (if you do not already have it)
-3. Double click the file OR open a terminal and do the following:
+3. Open a terminal and do the following:
 4. navigate into the directory
 5. type `java -jar ConsoleGame.jar`
 
