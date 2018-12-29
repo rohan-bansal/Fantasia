@@ -18,8 +18,6 @@ _100% complete_
 - Windows terminal color support (with `JNI`) for operating systems lower than Windows 10
 - More functions for EAST, WEST, NORTH, and SOUTH
 
-### _Changes made regularly to the .java file, finished program will be a .jar_
-
 **How to run the file (.java)**
 1. Download JDK (if you do not already have it)
 2. Clone repository
