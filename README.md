@@ -1,6 +1,8 @@
 # Fantasy-RPG
 
-A console game in which you are a character in a fantasy world, visiting villages and caves, fighting monsters, etc.   :P ;D
+A console game in which you are a character in a fantasy world.
+
+Head over to releases for the full game.
 
 _100% complete_
 
